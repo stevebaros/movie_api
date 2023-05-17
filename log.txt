@@ -1,36 +1,24 @@
-const http = require('http'),
-  fs = require('fs'),
-  url = require('url');
+URL: http://localhost:8080/documentation
+Timestamp: Wed May 17 2023 23:18:21 GMT+0200 (Центральная Европа, летнее время)
 
-http.createServer((request, response) => {
-  let addr = request.url,
-    q = url.parse(addr, true),
-    filePath = '';
+URL: http://localhost:8080/documentation
+Timestamp: Wed May 17 2023 23:18:33 GMT+0200 (Центральная Европа, летнее время)
 
-  fs.appendFile('log.txt', 'URL: ' + addr + '\nTimestamp: ' + new Date() + '\n\n', (err) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log('Added to log.');
-    }
-  });
+URL: http://localhost:8080/documentation
+Timestamp: Wed May 17 2023 23:19:14 GMT+0200 (Центральная Европа, летнее время)
 
-  if (q.pathname.includes('documentation')) {
-    filePath = (__dirname + '/documentation.html');
-  } else {
-    filePath = 'index.html';
-  }
+URL: http://localhost:8080/documentation
+Timestamp: Wed May 17 2023 23:19:46 GMT+0200 (Центральная Европа, летнее время)
 
-  fs.readFile(filePath, (err, data) => {
-    if (err) {
-      throw err;
-    }
+URL: http://localhost:8080/documentation
+Timestamp: Wed May 17 2023 23:20:15 GMT+0200 (Центральная Европа, летнее время)
 
-    response.writeHead(200, { 'Content-Type': 'text/html' });
-    response.write(data);
-    response.end();
+URL: http://localhost:8080/documentation
+Timestamp: Wed May 17 2023 23:20:43 GMT+0200 (Центральная Европа, летнее время)
 
-  });
+URL: http://localhost:8080/documentation
+Timestamp: Wed May 17 2023 23:20:45 GMT+0200 (Центральная Европа, летнее время)
 
-}).listen(8080);
-console.log('My test server is running on Port 8080.');
+URL: http://localhost:8080/documentation
+Timestamp: Wed May 17 2023 23:20:52 GMT+0200 (Центральная Европа, летнее время)
+
