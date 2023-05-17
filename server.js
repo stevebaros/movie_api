@@ -8,6 +8,14 @@ http.createServer((request, response) => {
   filePath = '';
 
 
+  fs.appendFile('log.txt', 'URL: ' + addr + '\nTimestamp: ' + new Date() + '\n\n', (err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log('Added to log.');
+    }
+  });
+
   if (q.pathname.includes('documentation')) {
     filePath = (__dirname + '/documentation.html');
   } else {
@@ -15,11 +23,11 @@ http.createServer((request, response) => {
   }
 
   fs.readFile(filePath, (err, data) => {
-    if(err) {
+    if (err) {
       throw err;
     }
-  
-  response.writeHead(200, { 'Content-Type': 'text/plain' });
+
+    response.writeHead(200, { 'Content-Type': 'text/plain' });
     response.write(data);
     response.end('Hello Node!');
   });
@@ -27,4 +35,3 @@ http.createServer((request, response) => {
 }).listen(8080);
 
 console.log('My first Node test server is running on Port 8080.');
-
