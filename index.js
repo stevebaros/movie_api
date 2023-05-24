@@ -1,1 +1,2 @@
-Режим вывода команд на экран (ECHO) включен.
+const express = require ("express");
+const app = express();
