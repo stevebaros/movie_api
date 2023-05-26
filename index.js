@@ -67,7 +67,7 @@ app.get('/', (req, res) => {
   res.send(responseText);
 });
 
-app.get('/documentation.html', (req, res) => {
+app.get('/documentation', (req, res) => {
   res.sendFile('public/documentation.html', { root: __dirname });
 });
 
@@ -77,7 +77,7 @@ app.get('/movies', (req, res) => {
   res.send(responseText);
 });
 
-app.use('/documentation.html', express.static('public'));
+app.use('/documentation', express.static('public'));
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
