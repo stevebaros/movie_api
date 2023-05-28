@@ -1,11 +1,153 @@
-My Top 10 Movies
-1) Stealing Beauty by Bernardo Bertolucci
-2) Ultimo Tango a Parigi by Bernardo Bertolucci
-3) The Dreamers by Bernardo Bertolucci
-4) Little Buddha by Bernardo Bertolucci
-5) Persona by Ingmar Bergman
-6) Viskningar och rop by Ingmar Bergman
-7) Smultronstället by Ingmar Bergman
-8) La notte by Michelangelo Antonioni
-9) Zabriskie Point by Michelangelo Antonioni
-10) Crimson Peak by Guillermo del Toro
+<!DOCTYPE html>
+<html lang=en>
+
+<head>
+  <meta charset="utf-8">
+  <title>Documentation</title>
+  <style>
+    table,
+    th,
+    td {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+
+  </header>
+  <main>
+  <table>
+      <thead>
+        <tr>
+          <th>Business logic</th>
+          <th>URL</th>
+          <th>HTTP Method</th>
+          <th>Request Body Data Format</th>
+          <th>Response Body Data Format</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Return a list of ALL movies to the user</td>
+          <td>C:\Users\norlo\Documents\careerfoundry\movie_api\movies</td>
+          <td>GET</td>
+          <td>None</td>
+          <td>A JSON object with the data about all the movies</td>
+        </tr>
+
+        <tr>
+          <td>Return data (description, genre, director, image URL, whether it/’s featured or not)
+            about a single movie by title to the user;</td>
+          <td>C:\Users\norlo\Documents\careerfoundry\movie_api\movies\[title]
+
+          </td>
+          <td>GET</td>
+          <td>None</td>
+          <td>A JSON object with the data about a movie by title including description, genre, director, image URL,
+            whether it’s featured or not. E.g.:</br>
+            {</br>
+            Title: “”,</br>
+            Description: “”,</br>
+            Genre: “”,</br>
+            Director: “”,</br>
+            Image URL: “”,</br>
+            Featured or not: “”</br>
+            }
+          </td>
+        </tr>
+
+        <tr>
+          <td>Return data about a genre (description) by name/title (e.g., “Thriller”);</td>
+          <td>C:\Users\norlo\Documents\careerfoundry\movie_api\movies\[title]\genre
+
+          </td>
+          <td>GET</td>
+          <td>None</td>
+          <td>A JSON object with the data about a movie genre. E.g.:</br>
+            {</br>
+            Title: “”,</br>
+            Description: “”,</br>
+            Genre: “”</br>
+            }
+          </td>
+        </tr>
+
+        <tr>
+          <td>Return data about a director (bio, birth year, death year) by name;</td>
+          <td>C:\Users\norlo\Documents\careerfoundry\movie_api\movies\director\[name]</td>
+          <td>GET</td>
+          <td>None</td>
+          <td>A JSON object with the data about the movie director E.g.:</br>
+            {</br>
+            Name: “”,</br>
+            Bio: “”,</br>
+            Birth year: “”,</br>
+            death year: “”</br>
+            }
+          </td>
+        </tr>
+
+        <tr>
+          <td>Allow new users to register;</td>
+          <td>C:\Users\norlo\Documents\careerfoundry\movie_api\movies\newuser</td>
+          <td>POST</td>
+          <td>A JSON object with the data about a new user. E.g.:
+            {
+            First and Last Name: “”,
+            Age: “”,
+            Preferences: “”
+            }
+          </td>
+          <td>A JSON object with the data about a new user including the id(username). E.g.:</br>
+            {</br>
+            username: “nickname”,</br>
+            favoriteMovie: []</br>
+            }
+          </td>
+        </tr>
+        <tr>
+          <td>Allow users to update their user info (username);</td>
+          <td>C:\Users\norlo\Documents\careerfoundry\movie_api\movies\newuser\update</td>
+          <td>PUT</td>
+          <td>None</td>
+          <td>A text message indicating that their user info (username) has been updated</td>
+        </tr>
+
+        <tr>
+          <td>Allow users to add a movie to their list of favorites (showing only a text that a movie has been added);
+          </td>
+          <td>C:\Users\norlo\Documents\careerfoundry\movie_api\movies\added</td>
+          <td>PUT</td>
+          <td>None</td>
+          <td>A text message indicating that a movie has been added</td>
+        </tr>
+
+        <tr>
+          <td>Allow users to remove a movie from their list of favorites (showing only a text that a movie has been
+            removed);</td>
+          <td>C:\Users\norlo\Documents\careerfoundry\movie_api\movies\remove</td>
+          <td>DELETE</td>
+          <td>None</td>
+          <td>A text message indicating that a movie has been removed</td>
+        </tr>
+
+        <tr>
+          <td>Allow existing users to deregister (showing only a text that a user email has been removed)</td>
+          <td>C:\Users\norlo\Documents\careerfoundry\movie_api\movies\newuser\deregister</td>
+          <td>DELETE</td>
+          <td>None</td>
+          <td>A text message indicating that a user email has been removed</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+
+  <footer>
+
+  </footer>
+  <script></script>
+</body>
+
+</html>
