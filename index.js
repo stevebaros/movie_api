@@ -232,7 +232,7 @@ app.post('/users', (req, res) => {
 });
 
 //Update
-app.put('/users/:id', (req, res) => {
+app.put('/users/:userid', (req, res) => {
   const { id } = req.params;
   const updatedUser = req.body;
 
@@ -246,10 +246,10 @@ app.put('/users/:id', (req, res) => {
 });
 
 //ADD A MOVIE (POST)
-app.post('/users/:id/:movieTitle', (req, res) => {
+app.post('/users/:id/favoriteMovies/:movieTitle', (req, res) => {
   const { id, movieTitle } = req.params;
-  
-  let user = users.find(user => user.id == id);
+
+  let user = users.find(user => user.id === +id);
   if (user) {
     user.favoriteMovies.push.movieTitle;
     res.status(200).send(`${movieTitle} has been added to user ${id} array`);
@@ -258,16 +258,16 @@ app.post('/users/:id/:movieTitle', (req, res) => {
   }
 });
 
-//Delete
-app.delete('/users/:id/:movieTitle', (req, res) => {
+//Delete Movie
+app.delete('/users/:id/favoriteMovies/:movieTitle', (req, res) => {
   const { id, movieTitle } = req.params;
 
-  let user = users.find(user => user.id == id);
+  let user = users.find(user => user.id === +id);
   if (user) {
-    user.favoriteMovies = user.favoriteMovies.filter(title => title  !== movieTitle);
-    res.status(200).send(`${movieTitle} has been removed from user ${id} array`);;
+    user.favoriteMovies = user.favoriteMovies.filter(title => title !== movieTitle);
+    res.status(200).send(`${movieTitle} has been removed from user ${id} array`);
   } else {
-    res.status(400).send("no such user");
+    res.status(400).send("no such movie");
   }
 });
 
