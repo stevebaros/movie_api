@@ -31,7 +31,7 @@
       <tbody>
         <tr>
           <td>Return a list of ALL movies to the user</td>
-          <td>http://localhost:8080/movies</td>
+          <td>/movies</td>
           <td>GET</td>
           <td>None</td>
           <td>A JSON object with the data about all the movies</td>
@@ -40,7 +40,7 @@
         <tr>
           <td>Return data (description, genre, director, image URL, whether it/’s featured or not)
             about a single movie by title to the user;</td>
-          <td>http://localhost:8080/movies/title
+          <td>/movies/title
 
           </td>
           <td>GET</td>
@@ -64,7 +64,7 @@
 
         <tr>
           <td>Return data about a genre (description) by genre name (e.g., “Drama”);</td>
-          <td>http://localhost:8080/movies/genre/Drama</td>
+          <td>/movies/genre/Drama</td>
           <td>GET</td>
           <td>None</td>
           <td>A JSON object with the data about a movie genre. E.g.:</br>
@@ -90,7 +90,7 @@
 
         <tr>
           <td>Allow new users to register;</td>
-          <td>http://localhost:8080/users</td>
+          <td>/users</td>
           <td>POST</td>
           <td>A JSON object with the data about a new user. E.g.:
             {</br>
@@ -107,7 +107,7 @@
         </tr>
         <tr>
           <td>Allow users to update their user info (username);</td>
-          <td>http://localhost:8080/users/:id</td>
+          <td>/users/:id</td>
           <td>PUT</td>
           <td>{ </br>"name": "Maddie updated her Name", </br>"favoriteMovie": ["Stealing Beauty"] }</td>
           <td>A text message indicating that their user info (username) has been updated</td>
@@ -116,7 +116,7 @@
         <tr>
           <td>Allow users to add a movie to their list of favorites (showing only a text that a movie has been added);
           </td>
-          <td>http://localhost:8080/users/:id/:movieTitle</td>
+          <td>/users/:id/:movieTitle</td>
           <td>PUT</td>
           <td>None</td>
           <td>A text message indicating that a movie has been added</td>
@@ -125,7 +125,7 @@
         <tr>
           <td>Allow users to remove a movie from their list of favorites (showing only a text that a movie has been
             removed);</td>
-          <td>http://localhost:8080/users/:id/:movieTitle</td>
+          <td>/users/:id/:movieTitle</td>
           <td>DELETE</td>
           <td>None</td>
           <td>A text message indicating that a movie has been removed</td>
@@ -133,7 +133,7 @@
 
         <tr>
           <td>Allow existing users to deregister (showing only a text that a user email has been removed)</td>
-          <td>http://localhost:8080/users/:id</td>
+          <td>/users/:id</td>
           <td>DELETE</td>
           <td>None</td>
           <td>A text message indicating that a user email has been removed</td>
