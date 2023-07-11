@@ -14,8 +14,6 @@ const Directors = Models.Director;
 
 mongoose.connect('mongodb://localhost:27017/cfDB'),
 
-app.use(bodyParser.json());
-
 //log requests to server
 app.use(morgan("common"));
 
@@ -34,13 +32,6 @@ let requestTime = (req, res, next) => {
   req.requestTime = Date.now();
   next();
 };
-
-// Users
-//   .create({
-//     name: req.body.name,
-//     email: req.body.email,
-//     favoriteMovies: req.body.favoriteMovies
-//   })
 
 app.use(myLogger);
 app.use(requestTime);
@@ -64,7 +55,7 @@ app.get("/movies", (req, res) => {
 });
 
 // get a movie by the title
-app.get('/movies/title/:Title', (req, res) => {
+app.get('/movies/:Title', (req, res) => {
   Movies.findOne({ Title: req.params.Title })
     .then((movie) => {
       res.json(movie);
@@ -78,8 +69,8 @@ app.get('/movies/title/:Title', (req, res) => {
 //get a director by name
 app.get('/movies/directors/:DirectorName', (req, res) => {
   Movies.findOne({ "Director.Name": req.params.DirectorName})
-    .then((directors) => {
-      res.json(directors);
+    .then((movie) => {
+      res.json(movie.Director);
     })
     .catch((err) => {
       console.error(err);
@@ -100,43 +91,21 @@ app.get("/users", function (req, res) {
 });
 
 // allow users to register
-app.post ('/users', (req, res) => {
-  console.log(333333, users)
-  Users.findOne({ name: req.body.Username })
-    .then((user) => {
-      if (user) {
-        return res.status(400).send(req.body.Username + "already exists")
-      } else {
-        Users.create({
-          "name": req.body.Username,
-          "email": req.body.Email,
-      })
-    .then((user) => {
-    res.status(201).json(user);
-  })
-  .catch((err) => {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
+app.post('/users', (req, res) => {
+  const userData = req.body;
+  const user = new Users(userData);
+  // console.log(77777777777888, user)
+
+  user.save()
+    .then(() => {
+      res.status(201).json({ message: 'User saved successfully' });
+    })
+    .catch(error => {
+      res.status(500).json({ error: `An error occurred while saving the user: ${error.message}` });
     });
-  }
-})
-})
 
-
-//   console.log(777777777777, req.body)
-//   const userData = req.body;
-//   const user = new Users(userData);
-
-//   user.save()
-//     .then(() => {
-//       res.status(201).json({ message: 'User saved successfully' });
-//     })
-//     .catch(error => {
-//       res.status(500).json({ error: 'An error occurred while saving the user' });
-//     });
-
-// // }
-// // );
+}
+);
 
 //get a user by username
 app.get('/users/:Username', (req, res) => {
@@ -150,19 +119,18 @@ app.get('/users/:Username', (req, res) => {
     });
 });
 
-// Add a movie to a user's list of favorites
-app.post('/users/:Username/movies/:MovieID', (req, res) => {
-  Users.findOneAndUpdate({ name: req.params.Username }, {
-    $push: { FavoriteMovies: req.params.MovieID }
-  },
-    { new: true }, // This line makes sure that the updated document is returned
-    (err, updatedUser) => {
-      if (err) {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
-      } else {
-        res.json(updatedUser);
-      }
+app.patch('/users/:Username', (req, res) => {
+  const movieData = req.body;
+
+  Users.findOneAndUpdate(
+    { name: req.params.Username },
+    { $set: movieData }
+  )
+    .then(() => {
+      res.send({ message: "success" });
+    })
+    .catch(err => {
+      res.status(500).send("Error" + err);
     });
 });
 
@@ -182,13 +150,32 @@ app.delete('/users/:Username', (req, res) => {
     });
 });
 
+//get a genre 
+app.get('/movies/genres/:GenreName', (req, res) => {
+  Movies.findOne({ "Genre.Name": req.params.GenreName })
+    .then((movie) => {
+      res.json(movie.Genre);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+});
+
 //access documentation.html using express.static
 app.use('/documentation', express.static('public'));
 
 //err handling
+// app.use((err, req, res, next) => {
+//   console.error(err.stack);
+//   res.status(500).send('Error!');
+// });
+
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Error!');
+  res.locals.error = err;
+  const status = err.status || 500;
+  res.status(status);
+  res.render('error');
 });
 
 // listen for requests
