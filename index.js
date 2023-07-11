@@ -94,7 +94,6 @@ app.get("/users", function (req, res) {
 app.post('/users', (req, res) => {
   const userData = req.body;
   const user = new Users(userData);
-  // console.log(77777777777888, user)
 
   user.save()
     .then(() => {
