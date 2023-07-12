@@ -133,6 +133,21 @@ app.patch('/users/:Username', (req, res) => {
     });
 });
 
+// Add a movie to a user's list of favorites
+app.post('/users/:Username/favoriteMovies/:MovieTitle', (req, res) => {
+
+  console.log(888888888, Users.findOneAndUpdate)
+  Users.findOneAndUpdate({ name: req.params.Username }, {
+    $push: { favoriteMovies: req.params.MovieTitle}
+  })
+    .then(() => {
+      res.send({ message: "success" });
+    })
+    .catch(err => {
+      res.status(500).send("Error" + err);
+    });;
+});
+
 // Delete a user by username
 app.delete('/users/:Username', (req, res) => {
   Users.findOneAndRemove({ name: req.params.Username })
@@ -171,10 +186,11 @@ app.use('/documentation', express.static('public'));
 // });
 
 app.use((err, req, res, next) => {
-  res.locals.error = err;
-  const status = err.status || 500;
-  res.status(status);
-  res.render('error');
+  res.status(err.status || 500);
+  res.json({
+    message: err.message,
+    error: err
+  });
 });
 
 // listen for requests
