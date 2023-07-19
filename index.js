@@ -66,6 +66,18 @@ app.get('/movies/:Title', (req, res) => {
     });
 });
 
+// Get all directors
+app.get('/directors', (req, res) => {
+  Directors.find()
+    .then((directors) => {
+      res.status(200).json(directors);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+});
+
 //get a director by name
 app.get('/movies/directors/:DirectorName', (req, res) => {
   Movies.findOne({ "Director.Name": req.params.DirectorName})
@@ -135,8 +147,6 @@ app.patch('/users/:Username', (req, res) => {
 
 // Add a movie to a user's list of favorites
 app.post('/users/:Username/favoriteMovies/:MovieTitle', (req, res) => {
-
-  console.log(888888888, Users.findOneAndUpdate)
   Users.findOneAndUpdate({ name: req.params.Username }, {
     $push: { favoriteMovies: req.params.MovieTitle}
   })
@@ -147,6 +157,22 @@ app.post('/users/:Username/favoriteMovies/:MovieTitle', (req, res) => {
       res.status(500).send("Error" + err);
     });;
 });
+
+// delete a movie (with exec)
+app.delete('/users/:Username/favoriteMovies/:MovieTitle', (req, res) => {
+  Users.findOneAndUpdate(
+    { Username: req.params.Username },
+    { $pull: { favoriteMovies: req.params.MovieTitle } }
+  )
+    .exec() // Add the .exec() method to execute the query
+    .then(() => {
+      res.send({ message: "success" });
+    })
+    .catch(err => {
+      res.status(500).send("Error" + err);
+    });
+});
+
 
 // Delete a user by username
 app.delete('/users/:Username', (req, res) => {
@@ -175,6 +201,19 @@ app.get('/movies/genres/:GenreName', (req, res) => {
       res.status(500).send('Error: ' + err);
     });
 });
+
+// Get all genres
+app.get('/genres', (req, res) => {
+  Genres.find()
+    .then((genres) => {
+      res.status(200).json(genres);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+});
+
 
 //access documentation.html using express.static
 app.use('/documentation', express.static('public'));
