@@ -9,13 +9,11 @@ const Models = require("./models.js");
 
 const Movies = Models.Movie;
 const Users = Models.User;
-const Genres = Models.Genre;
-const Directors = Models.Director;
 
 mongoose.connect('mongodb://localhost:27017/cfDB'),
 
-//log requests to server
-app.use(morgan("common"));
+  //log requests to server
+  app.use(morgan("common"));
 
 //import auth into index
 
@@ -45,13 +43,13 @@ app.get("/", (req, res) => {
 //return JSON object when at /movies
 app.get("/movies", (req, res) => {
   Movies.find()
-  .then((movies) => {
-    res.status(201).json(movies);
-  })
-  .catch((err) => {
-    console.error(err);
-    res.status(500).send("Error: " + err);
-  });
+    .then((movies) => {
+      res.status(201).json(movies);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
 });
 
 // get a movie by the title
@@ -66,21 +64,9 @@ app.get('/movies/:Title', (req, res) => {
     });
 });
 
-// Get all directors
-app.get('/directors', (req, res) => {
-  Directors.find()
-    .then((directors) => {
-      res.status(200).json(directors);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
-    });
-});
-
 //get a director by name
 app.get('/movies/directors/:DirectorName', (req, res) => {
-  Movies.findOne({ "Director.Name": req.params.DirectorName})
+  Movies.findOne({ "Director.Name": req.params.DirectorName })
     .then((movie) => {
       res.json(movie.Director);
     })
@@ -93,7 +79,7 @@ app.get('/movies/directors/:DirectorName', (req, res) => {
 //get all users
 app.get("/users", function (req, res) {
   Users.find()
-    .then(function(users) {
+    .then(function (users) {
       res.status(201).json(users);
     })
     .catch(function (err) {
@@ -114,7 +100,6 @@ app.post('/users', (req, res) => {
     .catch(error => {
       res.status(500).json({ error: `An error occurred while saving the user: ${error.message}` });
     });
-
 }
 );
 
@@ -148,7 +133,7 @@ app.patch('/users/:Username', (req, res) => {
 // Add a movie to a user's list of favorites
 app.post('/users/:Username/favoriteMovies/:MovieTitle', (req, res) => {
   Users.findOneAndUpdate({ name: req.params.Username }, {
-    $push: { favoriteMovies: req.params.MovieTitle}
+    $push: { favoriteMovies: req.params.MovieTitle }
   })
     .then(() => {
       res.send({ message: "success" });
@@ -202,27 +187,8 @@ app.get('/movies/genres/:GenreName', (req, res) => {
     });
 });
 
-// Get all genres
-app.get('/genres', (req, res) => {
-  Genres.find()
-    .then((genres) => {
-      res.status(200).json(genres);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
-    });
-});
-
-
 //access documentation.html using express.static
 app.use('/documentation', express.static('public'));
-
-//err handling
-// app.use((err, req, res, next) => {
-//   console.error(err.stack);
-//   res.status(500).send('Error!');
-// });
 
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
