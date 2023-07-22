@@ -11,15 +11,21 @@ const Movies = Models.Movie;
 const Users = Models.User;
 
 mongoose.connect('mongodb://localhost:27017/cfDB'),
+  { useNewUrlParser: true, useUnifiedTopology: true }
 
-  //log requests to server
-  app.use(morgan("common"));
-
-//import auth into index
-
-// const app = express();
+  // Middleware
+app.use(express.static('public'));
+app.use(express.json());
+app.use(morgan("common"));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// morgan = require("morgan");
+
+// Authentification & Login Endpoint
+const passport = require('passport'); // JWT Authentification
+app.use(passport.initialize());
+require('./passport');
+
+let auth = require('./auth')(app) // Login HTML Authentification
 
 let myLogger = (req, res, next) => {
   console.log(req.url);
@@ -40,8 +46,19 @@ app.get("/", (req, res) => {
   res.send("Welcome!");
 });
 
+app.get('/movies', passport.authenticate('jwt', { session: false }),  (req, res) => {
+   Movies.find()
+    .then((movies) => {
+      res.status(201).json(movies);
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error: ' + error);
+    });
+}); //NEW CODE
+
 //return JSON object when at /movies
-app.get("/movies", (req, res) => {
+app.get("/movies", passport.authenticate('jwt', { session: false }), (req, res) => {
   Movies.find()
     .then((movies) => {
       res.status(201).json(movies);
@@ -53,7 +70,7 @@ app.get("/movies", (req, res) => {
 });
 
 // get a movie by the title
-app.get('/movies/:Title', (req, res) => {
+app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), (req, res) => {
   Movies.findOne({ Title: req.params.Title })
     .then((movie) => {
       res.json(movie);
@@ -65,7 +82,7 @@ app.get('/movies/:Title', (req, res) => {
 });
 
 //get a director by name
-app.get('/movies/directors/:DirectorName', (req, res) => {
+app.get('/movies/directors/:DirectorName', passport.authenticate('jwt', { session: false }), (req, res) => {
   Movies.findOne({ "Director.Name": req.params.DirectorName })
     .then((movie) => {
       res.json(movie.Director);
@@ -77,7 +94,7 @@ app.get('/movies/directors/:DirectorName', (req, res) => {
 });
 
 //get all users
-app.get("/users", function (req, res) {
+app.get("/users", passport.authenticate('jwt', { session: false }), function (req, res) {
   Users.find()
     .then(function (users) {
       res.status(201).json(users);
@@ -93,10 +110,15 @@ app.post('/users', (req, res) => {
   const userData = req.body;
   const user = new Users(userData);
 
-  user.save()
+  user.save({
+    Name: req.body.Name,
+    Password: req.body.Password,
+    Email: req.body.Email,
+    Birthday: req.body.Birthday
+  })
     .then(() => {
       res.status(201).json({ message: 'User saved successfully' });
-    })
+    }) 
     .catch(error => {
       res.status(500).json({ error: `An error occurred while saving the user: ${error.message}` });
     });
@@ -104,18 +126,18 @@ app.post('/users', (req, res) => {
 );
 
 //get a user by username
-app.get('/users/:Username', (req, res) => {
+app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOne({ name: req.params.Username })
     .then((user) => {
       res.json(user);
-    })
+    }) 
     .catch((err) => {
       console.error(err);
       res.status(500).send('Error: ' + err);
     });
 });
 
-app.patch('/users/:Username', (req, res) => {
+app.patch('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
   const movieData = req.body;
 
   Users.findOneAndUpdate(
@@ -131,7 +153,7 @@ app.patch('/users/:Username', (req, res) => {
 });
 
 // Add a movie to a user's list of favorites
-app.post('/users/:Username/favoriteMovies/:MovieTitle', (req, res) => {
+app.post('/users/:Username/favoriteMovies/:MovieTitle', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOneAndUpdate({ name: req.params.Username }, {
     $push: { favoriteMovies: req.params.MovieTitle }
   })
@@ -144,7 +166,7 @@ app.post('/users/:Username/favoriteMovies/:MovieTitle', (req, res) => {
 });
 
 // delete a movie (with exec)
-app.delete('/users/:Username/favoriteMovies/:MovieTitle', (req, res) => {
+app.delete('/users/:Username/favoriteMovies/:MovieTitle', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOneAndUpdate(
     { Username: req.params.Username },
     { $pull: { favoriteMovies: req.params.MovieTitle } }
@@ -160,7 +182,7 @@ app.delete('/users/:Username/favoriteMovies/:MovieTitle', (req, res) => {
 
 
 // Delete a user by username
-app.delete('/users/:Username', (req, res) => {
+app.delete('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOneAndRemove({ name: req.params.Username })
     .then((user) => {
       if (!user) {
@@ -176,7 +198,7 @@ app.delete('/users/:Username', (req, res) => {
 });
 
 //get a genre 
-app.get('/movies/genres/:GenreName', (req, res) => {
+app.get('/movies/genres/:GenreName', passport.authenticate('jwt', { session: false }), (req, res) => {
   Movies.findOne({ "Genre.Name": req.params.GenreName })
     .then((movie) => {
       res.json(movie.Genre);
