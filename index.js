@@ -3,9 +3,11 @@ bodyParser = require('body-parser'),
   uuid = require('uuid');
 
 const morgan = require("morgan");
-const app = express();
+
 const mongoose = require("mongoose");
 const Models = require("./models.js");
+const cors = require('cors');
+const { check, validationResult } = require('express-validator');
 
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -13,18 +15,35 @@ const Users = Models.User;
 mongoose.connect('mongodb://localhost:27017/cfDB'),
   { useNewUrlParser: true, useUnifiedTopology: true }
 
-  // Middleware
-app.use(express.static('public'));
+  const app = express();
+
+// Middleware
 app.use(express.json());
-app.use(morgan("common"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
 // Authentification & Login Endpoint
 const passport = require('passport'); // JWT Authentification
 app.use(passport.initialize());
 require('./passport');
 
+app.use(cors());
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        // If a specific origin isn't found on the list of allowed origins
+        let message =
+          `The CORS policy for this application doesn't allow access from origin ` +
+          origin;
+        return callback(new Error(message), false);
+      }
+      return callback(null, true);
+    },
+  })
+);
 let auth = require('./auth')(app) // Login HTML Authentification
 
 let myLogger = (req, res, next) => {
@@ -41,13 +60,15 @@ app.use(myLogger);
 app.use(requestTime);
 app.use(morgan("common"));
 
+
+
 //default text response when at /
 app.get("/", (req, res) => {
   res.send("Welcome!");
 });
 
-app.get('/movies', passport.authenticate('jwt', { session: false }),  (req, res) => {
-   Movies.find()
+app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
+  Movies.find()
     .then((movies) => {
       res.status(201).json(movies);
     })
@@ -106,31 +127,50 @@ app.get("/users", passport.authenticate('jwt', { session: false }), function (re
 });
 
 // allow users to register
-app.post('/users', (req, res) => {
-  const userData = req.body;
-  const user = new Users(userData);
+app.post('/users',
+  [
+    check('Name', 'Name is required').isLength({ min: 3 }),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email does not appear to be valid').isEmail(),
+  ],
+  (req, res) => {
 
-  user.save({
-    Name: req.body.Name,
-    Password: req.body.Password,
-    Email: req.body.Email,
-    Birthday: req.body.Birthday
-  })
-    .then(() => {
-      res.status(201).json({ message: 'User saved successfully' });
-    }) 
-    .catch(error => {
-      res.status(500).json({ error: `An error occurred while saving the user: ${error.message}` });
-    });
-}
-);
+    // check the validation object for errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+    const hashedPassword = Users.hashPassword(req.body.Password);
+    // const userData = req.body;
+    // const user = new Users(userData);
+    // user.save({
+    //   Name: req.body.Name,
+    //   Password: hashedPassword,
+    //   Email: req.body.Email,
+    //   Birthday: req.body.Birthday
+    // })
+    const userData = {
+      Name: req.body.Name,
+      Password: hashedPassword, // Use the hashed password here
+      Email: req.body.Email,
+      Birthday: req.body.Birthday
+    }
+    const user = new Users(userData);
+    user.save()
+      .then(() => {
+        res.status(201).json({ message: 'User saved successfully' });
+      })
+      .catch(error => {
+        res.status(500).json({ error: `An error occurred while saving the user: ${error.message}` });
+      })
+  });
 
 //get a user by username
 app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOne({ name: req.params.Username })
     .then((user) => {
       res.json(user);
-    }) 
+    })
     .catch((err) => {
       console.error(err);
       res.status(500).send('Error: ' + err);
@@ -183,7 +223,7 @@ app.delete('/users/:Username/favoriteMovies/:MovieTitle', passport.authenticate(
 
 // Delete a user by username
 app.delete('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
-  Users.findOneAndRemove({ name: req.params.Username })
+  Users.findOneAndRemove({ Name: req.params.Username })
     .then((user) => {
       if (!user) {
         res.status(400).send(req.params.Username + ' was not found');

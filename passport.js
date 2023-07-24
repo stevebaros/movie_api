@@ -13,23 +13,48 @@ passport.use(new LocalStrategy(
       passwordField: 'Password',
     },
     (username, password, callback) => {
-      console.log(username + '  ' + password);
- 
+      console.log('Local strategy', { username, password });
     Users.findOne({ Name: username })
       .then((user) => {
+        console.log('User from DB:', user);
         if (!user) {
-          console.log('Incorect Username');
+          console.log('User not found');
           return callback(null, false, { message: 'Incorrect Username or Password' });
         }
-        console.log('Finished');
-        return callback(null, user)
+
+        const isValidPassword = user.validatePassword(password);
+        console.log('Password is valid:', isValidPassword);
+
+        if (!isValidPassword) {
+          return callback(null, false, { message: 'Incorrect password.' });
+        }
+        return callback(null, user);
       })
       .catch((error) => {
-        console.log(error);
+        console.log('Error in Passport strategy:', error);
         return callback(error);
       });
   }
 ));
+ 
+//     Users.findOne({ Name: username })
+//       .then((user) => {
+//         if (!user) {
+//           console.log('User not found');
+//           return callback(null, false, { message: 'Incorrect Username or Password' });
+//         } if (!user.validatePassword(password)) {
+//           console.log('incorrect password');
+//           return callback(null, false, { message: 'Incorrect password.' });
+//         }
+//         console.log('Finished');
+//         return callback(null, user)
+//       })
+//       .catch((error) => {
+//         console.log(error);
+//         return callback(error);
+//       });
+//   }
+// ));
 
 passport.use(new JWTStrategy({
   jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
