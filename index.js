@@ -141,14 +141,7 @@ app.post('/users',
       return res.status(422).json({ errors: errors.array() });
     }
     const hashedPassword = Users.hashPassword(req.body.Password);
-    // const userData = req.body;
-    // const user = new Users(userData);
-    // user.save({
-    //   Name: req.body.Name,
-    //   Password: hashedPassword,
-    //   Email: req.body.Email,
-    //   Birthday: req.body.Birthday
-    // })
+
     const userData = {
       Name: req.body.Name,
       Password: hashedPassword, // Use the hashed password here

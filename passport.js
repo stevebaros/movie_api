@@ -36,25 +36,6 @@ passport.use(new LocalStrategy(
       });
   }
 ));
- 
-//     Users.findOne({ Name: username })
-//       .then((user) => {
-//         if (!user) {
-//           console.log('User not found');
-//           return callback(null, false, { message: 'Incorrect Username or Password' });
-//         } if (!user.validatePassword(password)) {
-//           console.log('incorrect password');
-//           return callback(null, false, { message: 'Incorrect password.' });
-//         }
-//         console.log('Finished');
-//         return callback(null, user)
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//         return callback(error);
-//       });
-//   }
-// ));
 
 passport.use(new JWTStrategy({
   jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
