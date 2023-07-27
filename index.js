@@ -121,6 +121,7 @@ app.get('/movies/directors/:DirectorName', passport.authenticate('jwt', { sessio
 
 //get all users
 app.get("/users", passport.authenticate('jwt', { session: false }), function (req, res) {
+  console.log(req.params.Username);  // Ad
   Users.find()
     .then(function (users) {
       res.status(201).json(users);
@@ -165,7 +166,8 @@ app.post('/users',
 
 //get a user by username
 app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
-  Users.findOne({ name: req.params.Username })
+  console.log(req.params.Username);  // Added
+  Users.findOne({ Name: req.params.Username })
     .then((user) => {
       res.json(user);
     })
