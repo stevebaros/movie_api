@@ -5,6 +5,7 @@ bodyParser = require('body-parser'),
 const morgan = require("morgan");
 
 const mongoose = require("mongoose");
+mongoose.set('debug', true);
 const Models = require("./models.js");
 const cors = require('cors');
 const { check, validationResult } = require('express-validator');
