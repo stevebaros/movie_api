@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-let movieSchema = mongoose?.Schema({
+let movieSchema = mongoose.Schema({
   Title: { type: String, required: true },
   Description: { type: String, required: true },
   Genre: {
@@ -17,7 +17,7 @@ let movieSchema = mongoose?.Schema({
   Featured: Boolean
 });
 
-let userSchema = mongoose?.Schema({
+let userSchema = mongoose.Schema({
   Name: { type: String, required: true },
   Password: { type: String, required: true },
   Email: { type: String, required: true },
