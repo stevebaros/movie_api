@@ -12,14 +12,6 @@ const { check, validationResult } = require('express-validator');
 const Movies = Models.Movie;
 const Users = Models.User;
 
-// mongoose.connect('mongodb://localhost:27017/cfDB'),
-// // mongoose.connect(process.env.CONNECTION_URI,
-//   { useNewUrlParser: true, useUnifiedTopology: true };
-
-// mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-//   .then(() => console.log('Database connected successfully'))
-//   .catch(err => console.error('Database connection error:', err));
-
 mongoose.connect(
   process.env.MONGODB_URI,
   { useNewUrlParser: true, useUnifiedTopology: true,  },
@@ -148,6 +140,7 @@ app.post('/users',
     check('Email', 'Email does not appear to be valid').isEmail(),
   ],
   (req, res) => {
+    console.log(req.body); // Log the request body
 
     // check the validation object for errors
     const errors = validationResult(req);
