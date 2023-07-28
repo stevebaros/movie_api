@@ -20,7 +20,7 @@ const Users = Models.User;
 //   .then(() => console.log('Database connected successfully'))
 //   .catch(err => console.error('Database connection error:', err));
 
-mongoose?.connect(
+mongoose.connect(
   process.env.MONGODB_URI,
   { useNewUrlParser: true, useUnifiedTopology: true,  },
   () => {
