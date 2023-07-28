@@ -16,9 +16,17 @@ const Users = Models.User;
 // // mongoose.connect(process.env.CONNECTION_URI,
 //   { useNewUrlParser: true, useUnifiedTopology: true };
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Database connected successfully'))
-  .catch(err => console.error('Database connection error:', err));
+// mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+//   .then(() => console.log('Database connected successfully'))
+//   .catch(err => console.error('Database connection error:', err));
+
+mongoose.connect(
+  process.env.MONGODB_URI,
+  { useNewUrlParser: true, useUnifiedTopology: true,  },
+  () => {
+    console.log('Connected to MongoDB');
+  }
+);
 
   const app = express();
 
